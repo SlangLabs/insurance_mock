@@ -20,8 +20,8 @@ import in.slanglabs.platform.action.SlangIntentAction;
  */
 
 public class VoiceInterface {
-    private static String app_id = "350bf9e1a0d14d11943feb69b3bf3c52";
-    private static String api_key = "9b67d75445d341e8a20ab5ed271cf846";
+    private static String app_id = "your_buddy_id";
+    private static String api_key = "your_account_key";
     private static Context appContext;
 
     // Intents defined in Slang Console
