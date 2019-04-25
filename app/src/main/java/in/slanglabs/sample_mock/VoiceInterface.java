@@ -20,9 +20,16 @@ import in.slanglabs.platform.action.SlangIntentAction;
  */
 
 public class VoiceInterface {
-    private static String app_id = "your_buddy_id";
-    private static String api_key = "your_buddy_key";
+    private static String app_id = "350bf9e1a0d14d11943feb69b3bf3c52";
+    private static String api_key = "9b67d75445d341e8a20ab5ed271cf846";
     private static Context appContext;
+
+    // Intents defined in Slang Console
+    private final static String BUY_ONLINE = "buy_online";
+    private final static String RENEW_POLICY = "renew_policy";
+
+    // Entities defined for the above intents
+    private final static String POLICY_NAME = "product";
 
     // To initialize Slang in your application, simply call VoiceInterface.init(context)
     public static void init(Context context) {
@@ -112,7 +119,46 @@ public class VoiceInterface {
         @Override
         public Status action(SlangIntent slangIntent, SlangSession slangSession) {
             // Insert the handler for the intents here
+            switch (slangIntent.getName()) {
+                case BUY_ONLINE:
+                    // Handling online buying intent
+                    if (slangIntent.getEntity(POLICY_NAME) != null &&
+                        slangIntent.getEntity(POLICY_NAME).isResolved()) {
+                        // Handle the case where the policy name is given
+                        // Switch to the activity that shows the given policy
+
+                        slangIntent.getCompletionStatement().overrideAffirmative(
+                            "Sure. Switching to " +
+                                slangIntent.getEntity(POLICY_NAME).getValue() +
+                                ". Please read the details carefully"
+                        );
+                    } else {
+                        // No policy given. Switch the page that shows all policies
+                        slangIntent.getCompletionStatement().overrideAffirmative(
+                            "Sure. Showing all policies. Please select the one you are interested in"
+                        );
+                    }
+                    break;
+
+                case RENEW_POLICY:
+                    // Handle renewal of policy
+                    if (!isUserLoggedIn()) {
+                        // Use is not logged in. Switch to the logged in screen
+
+                        slangIntent.getStartStatement().overrideAffirmative("Please login first to proceed");
+                    } else {
+                        // Logged in user. Show them their list of policies
+
+                        slangIntent.getCompletionStatement().overrideAffirmative("Please select the policy you want to renew");
+                    }
+                    break;
+            }
             return null;
         }
+    }
+
+    private static boolean isUserLoggedIn() {
+        // Check for login
+        return false;
     }
 }
