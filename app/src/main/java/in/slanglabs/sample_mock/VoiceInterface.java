@@ -123,19 +123,27 @@ public class VoiceInterface {
                 case BUY_ONLINE:
                     // Handling online buying intent
                     if (slangIntent.getEntity(POLICY_NAME) != null &&
-                        slangIntent.getEntity(POLICY_NAME).isResolved()) {
+                        slangIntent.getEntity(POLICY_NAME).isResolved() &&
+                        planExists(slangIntent.getEntity(POLICY_NAME).getValue())) {
                         // Handle the case where the policy name is given
-                        // Switch to the activity that shows the given policy
-
-                        slangIntent.getCompletionStatement().overrideAffirmative(
-                            "Sure. Switching to " +
-                                slangIntent.getEntity(POLICY_NAME).getValue() +
-                                ". Please read the details carefully"
-                        );
+                        // Switch to the activity that shows the given policy if it exists
+                        if (planExists(slangIntent.getEntity(POLICY_NAME).getValue())) {
+                            slangIntent.getCompletionStatement().overrideAffirmative(
+                                "Sure. Switching to " +
+                                    slangIntent.getEntity(POLICY_NAME).getValue() +
+                                    ". Please read the details carefully"
+                            );
+                        } else {
+                            // Else just show the list of all plans
+                            slangIntent.getCompletionStatement().overrideAffirmative(
+                                "There are no plans that match the name you mentioned. " +
+                                "Please select the policy you are interested in"
+                            );
+                        }
                     } else {
                         // No policy given. Switch the page that shows all policies
                         slangIntent.getCompletionStatement().overrideAffirmative(
-                            "Sure. Showing all policies. Please select the one you are interested in"
+                            "Showing all policies. Please select the plan you are interested in"
                         );
                     }
                     break;
@@ -153,12 +161,18 @@ public class VoiceInterface {
                     }
                     break;
             }
-            return null;
+
+            return Status.SUCCESS;
         }
     }
 
+    // Check if the given product exists
+    private static boolean planExists(String product) {
+        return true;
+    }
+
+    // Check if user is logged in
     private static boolean isUserLoggedIn() {
-        // Check for login
         return false;
     }
 }
